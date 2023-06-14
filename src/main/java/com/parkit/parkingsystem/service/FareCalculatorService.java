@@ -13,9 +13,16 @@ public class FareCalculatorService {
         long inHour = ticket.getInTime().getTime();
         long outHour = ticket.getOutTime().getTime();
 
-        //TODO: Some tests are failing here. Need to check if this logic is correct
+        //The time is now in hours instead of milliseconds
         long duration = outHour - inHour;
         long durationInHour = duration /(1000*60*60);
+
+        // If the client parks less than 30 mins
+        if (durationInHour <= 30) {
+            ticket.setPrice(0);
+            return;
+        }
+
 
         switch (ticket.getParkingSpot().getParkingType()){
             case CAR: {
