@@ -17,11 +17,12 @@ public class FareCalculatorService {
         long duration = outHour - inHour;
         long durationInHour = duration /(1000*60*60);
 
-        // If the client parks less than 30 mins
-        if (durationInHour <= 30) {
+        // If the client parks less than 30 minutes. STEP 3
+        if (durationInHour <= 0.5) {
             ticket.setPrice(0);
             return;
         }
+
 
 
         switch (ticket.getParkingSpot().getParkingType()){
