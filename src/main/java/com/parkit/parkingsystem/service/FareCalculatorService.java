@@ -10,12 +10,12 @@ public class FareCalculatorService {
             throw new IllegalArgumentException("Out time provided is incorrect:"+ticket.getOutTime().toString());
         }
 
-        long inHour = ticket.getInTime().getTime();
-        long outHour = ticket.getOutTime().getTime();
+        double inHour = ticket.getInTime().getTime();
+        double outHour = ticket.getOutTime().getTime();
 
         //The time is now in hours instead of milliseconds
-        long duration = outHour - inHour;
-        long durationInHour = duration /(1000*60*60);
+        double duration = outHour - inHour;
+        double durationInHour = duration /(3600000d);
 
         // If the client parks less than 30 minutes. STEP 3
         if (durationInHour <= 0.5) {
