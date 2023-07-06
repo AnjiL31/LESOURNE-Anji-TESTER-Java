@@ -140,6 +140,7 @@ public class FareCalculatorServiceTest {
         assertEquals(0, ticket.getPrice());
 
     }
+
     @Test
     public void calculateFareBikeWithLessThan30minutesParkingTime() {
         Date inTime = new Date();
@@ -155,4 +156,44 @@ public class FareCalculatorServiceTest {
 
     }
 
+
+    @Test
+    //this test must call the calculateFare method with a ticket for a car and with the parameter to true, then check that the price calculated is 95% of the full price.
+    //of the full fare. The duration of the ticket must be more than 30 minutes.
+    public void calculateFareCarWithDiscount() {
+
+        Ticket ticket = new Ticket();
+        ticket.setInTime(new Date(System.currentTimeMillis() - 2 * 60 * 60 * 1000)); // 2 hours ago
+        ticket.setOutTime(new Date());
+        ticket.setParkingSpot(new ParkingSpot(1, ParkingType.CAR, false));
+        boolean isRegularUser = true;
+
+        //Calculate the discount
+        fareCalculatorService.calculateFare(ticket, isRegularUser);
+        double calculatedPrice = ticket.getPrice();
+
+        // Apply the discount
+        double expectedPrice = 0.95 * 2 * Fare.CAR_RATE_PER_HOUR; // 5% discount applied for 2 hours of parking
+        assertEquals(expectedPrice, calculatedPrice);
+
+    }
+
+    //For bikes
+    @Test
+    public void calculateFareBikeWithDiscount() {
+
+        Ticket ticket = new Ticket();
+        ticket.setInTime(new Date(System.currentTimeMillis() - 3 * 60 * 60 * 1000)); // 3 hrs ago
+        ticket.setOutTime(new Date());
+        ticket.setParkingSpot(new ParkingSpot(1, ParkingType.BIKE, false));
+        boolean isRegularUser = true;
+
+        //Calculate the discount
+        fareCalculatorService.calculateFare(ticket, isRegularUser);
+        double calculatedPrice = ticket.getPrice();
+
+        // Apply the discount
+        double expectedPrice = 0.95 * 3 * Fare.BIKE_RATE_PER_HOUR; // 5% discount applied for 3 hours of parking
+        assertEquals(expectedPrice, calculatedPrice);
+    }
 }
