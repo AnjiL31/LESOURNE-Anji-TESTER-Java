@@ -1,5 +1,8 @@
 package com.parkit.parkingsystem.service;
 
+
+import java.util.Date;
+
 import com.parkit.parkingsystem.constants.ParkingType;
 import com.parkit.parkingsystem.dao.ParkingSpotDAO;
 import com.parkit.parkingsystem.dao.TicketDAO;
@@ -12,6 +15,8 @@ import org.apache.logging.log4j.Logger;
 import java.util.Date;
 
 public class ParkingService {
+
+
 
     private static final Logger logger = LogManager.getLogger("ParkingService");
 
