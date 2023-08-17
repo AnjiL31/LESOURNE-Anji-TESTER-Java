@@ -1,5 +1,5 @@
 package com.parkit.parkingsystem;
-
+import com.parkit.parkingsystem.constants.Fare;
 import com.parkit.parkingsystem.constants.ParkingType;
 import com.parkit.parkingsystem.dao.ParkingSpotDAO;
 import com.parkit.parkingsystem.dao.TicketDAO;
@@ -19,6 +19,7 @@ import java.util.Date;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
+
 @ExtendWith(MockitoExtension.class)
 public class ParkingServiceTest {
 
@@ -36,20 +37,20 @@ public class ParkingServiceTest {
         try {
             Mockito.lenient().when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn("ABCDEF");
             Mockito.lenient().when(inputReaderUtil.readSelection()).thenReturn(9);
-            ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.CAR,false);
+            ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.CAR, false);
             Ticket ticket = new Ticket();
-            ticket.setInTime(new Date(System.currentTimeMillis() - (60*60*1000)));
+            ticket.setInTime(new Date(System.currentTimeMillis() - (60 * 60 * 1000)));
             ticket.setParkingSpot(parkingSpot);
             ticket.setVehicleRegNumber("ABCDEF");
             Mockito.lenient().when(ticketDAO.getTicket(anyString())).thenReturn(ticket);
-            Mockito.lenient(). when(ticketDAO.updateTicket(any(Ticket.class))).thenReturn(true);
+            Mockito.lenient().when(ticketDAO.updateTicket(any(Ticket.class))).thenReturn(true);
 
             Mockito.lenient().when(parkingSpotDAO.updateParking(any(ParkingSpot.class))).thenReturn(true);
 
             parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);
         } catch (Exception e) {
             e.printStackTrace();
-            throw  new RuntimeException("Failed to set up test mock objects");
+            throw new RuntimeException("Failed to set up test mock objects");
         }
     }
 
@@ -77,14 +78,15 @@ public class ParkingServiceTest {
     public void testGetNextParkingNumberIfAvailable() {
         when(parkingSpotDAO.getNextAvailableSlot(any(ParkingType.class))).thenReturn(1);
         ParkingSpot parkingSpot = parkingService.getNextParkingNumberIfAvailable();
-        assertEquals(1,parkingSpot.getId());
+        assertEquals(1, parkingSpot.getId());
 
 
-}
+    }
+
     @Test
     public void testGetNextParkingNumberIfAvailableParkingNumberNotFound() {
         ParkingSpot parkingSpot = parkingService.getNextParkingNumberIfAvailable(); //declare variable
-        assertEquals(null,parkingSpot);//If test returns a parking space, test fails
+        assertEquals(null, parkingSpot);//If test returns a parking space, test fails
 
     }
 
@@ -93,13 +95,36 @@ public class ParkingServiceTest {
 
         int incorrectVehicleType = 2;
         when(inputReaderUtil.readSelection()).thenReturn(incorrectVehicleType);
-        assertEquals(null,parkingService.getNextParkingNumberIfAvailable());
+        assertEquals(null, parkingService.getNextParkingNumberIfAvailable());
         //ParkingSpot parkingSpot = parkingService.getNextParkingNumberIfAvailable(incorrectVehicleType);
-
-
-        }
-
     }
+
+    @Test
+    public void testParkingLotExitRecurringUser() {
+        // Given: Recurring user's vehicle
+        String recurringUserVehicleRegNumber = "ABCDEF"; // The recurring user's vehicle registration number
+
+        // Mock the behavior for a recurring user's ticket retrieval
+        Ticket recurringUserTicket = new Ticket();
+        recurringUserTicket.setInTime(new Date(System.currentTimeMillis() - (60 * 60 * 1000)));
+        recurringUserTicket.setVehicleRegNumber(recurringUserVehicleRegNumber);
+        when(ticketDAO.getTicket(eq(recurringUserVehicleRegNumber))).thenReturn(recurringUserTicket);
+
+        // When: Recurring user exits the parking lot
+        parkingService.processExitingVehicle();
+
+        // Then: Verify the price calculation with 5% discount
+        verify(ticketDAO, times(1)).updateTicket(any(Ticket.class)); // Ensure ticket update is called
+
+        // Calculate the expected price for a recurring user with 5% discount
+        long expectedPrice = (long) (recurringUserTicket.getDuration() * Fare.CAR_RATE_PER_HOUR * 0.95);
+        assertEquals(expectedPrice, recurringUserTicket.getPrice());
+    }
+
+
+}
+
+
 
 
 

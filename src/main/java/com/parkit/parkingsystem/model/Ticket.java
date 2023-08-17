@@ -58,4 +58,10 @@ public class Ticket {
     public void setOutTime(Date outTime) {
         this.outTime = outTime;
     }
+
+    public long getDuration(){
+        long timeOfParking = this.outTime.getTime() - this.inTime.getTime();
+        long timeOfParkingInHour = timeOfParking/(1000*60*60);
+        return timeOfParkingInHour;
+    }
 }

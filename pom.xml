@@ -144,9 +144,4 @@
     </build>
 
 </project>
-<dependency>
-<groupId>org.mockito</groupId>
-<artifactId>mockito-core</artifactId>
-<version>3.x.x</version> <!-- Replace with the latest version available -->
-<scope>test</scope>
-</dependency>
+
