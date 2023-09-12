@@ -76,7 +76,12 @@ public class TicketDAO {
             con = dataBaseConfig.getConnection();
             PreparedStatement ps = con.prepareStatement(DBConstants.UPDATE_TICKET);
             ps.setDouble(1, ticket.getPrice());
-            ps.setTimestamp(2, new Timestamp(ticket.getOutTime().getTime()));
+            if(ticket.getOutTime()!=null){
+                ps.setTimestamp(2, new Timestamp(ticket.getOutTime().getTime()));
+            }
+            else {
+                ps.setTimestamp(2,null);
+            }
             ps.setInt(3, ticket.getId());
             ps.execute();
             return true;

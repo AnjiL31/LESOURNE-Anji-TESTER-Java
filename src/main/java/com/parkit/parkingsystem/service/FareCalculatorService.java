@@ -18,13 +18,17 @@ public class FareCalculatorService {
         double inHour = ticket.getInTime().getTime();
         double outHour = ticket.getOutTime().getTime();
 
+        System.out.println("inHour = " + inHour);
+        System.out.println("outHour = " + outHour);
+
         //The time is now in hours instead of milliseconds
-        double duration = outHour - inHour;
+        double duration = outHour - inHour; // verify that its 1hour
         double durationInHour = duration / (3600000d);
 
         // If the client parks less than 30 minutes. STEP 3
         if (durationInHour <= 0.5) {
-            ticket.setPrice(0);
+            ticket.setPrice(Fare.MINIMUM_PRICE);
+
             return;
         }
         switch (ticket.getParkingSpot().

@@ -60,7 +60,7 @@ public class ParkingSpotDAO {
         Connection con = null;
         try {
             con = dataBaseConfig.getConnection();
-            PreparedStatement ps = con.prepareStatement(DBConstants.GET_PARKING_SPOT);
+            PreparedStatement ps = con.prepareStatement(DBConstants.GET_PARKING_SPOT);//request
             ps.setInt(1,parkingNumber);
             ResultSet rs = ps.executeQuery();
 
