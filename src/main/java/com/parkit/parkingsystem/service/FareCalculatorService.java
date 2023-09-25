@@ -27,8 +27,7 @@ public class FareCalculatorService {
 
         // If the client parks less than 30 minutes. STEP 3
         if (durationInHour <= 0.5) {
-            ticket.setPrice(Fare.MINIMUM_PRICE);
-
+            ticket.setPrice(0);
             return;
         }
         switch (ticket.getParkingSpot().

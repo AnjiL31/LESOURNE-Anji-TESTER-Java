@@ -89,18 +89,27 @@ public class ParkingDataBaseIT {
     @Test
     public void testParkingLotExitRecurringUser() {
         ParkingService parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);
+        Ticket ticketv2 = ticketDAO.getTicket("ABCDEF");
         parkingService.processIncomingVehicle();
         Ticket ticket = ticketDAO.getTicket("ABCDEF"); // Assuming "ABCDEF" is the vehicle registration number
         // The recurring user has parked for 1 hour
         ticket.setInTime(new Date(System.currentTimeMillis() - 120 * 60 * 1000)); // 1 hour ago
         ticketDAO.updateTicket(ticket);
-
         parkingService.processExitingVehicle();
         Ticket updatedTicket = ticketDAO.getTicket("ABCDEF");
 
-        double expectedPrice = Fare.CAR_RATE_PER_HOUR * 0.95 ;
-        assertEquals(expectedPrice,updatedTicket.getPrice());
+        double expectedPrice = 2 * Fare.CAR_RATE_PER_HOUR ;
+        assertEquals(expectedPrice,updatedTicket.getPrice(),0.01);
 
+
+        parkingService.processIncomingVehicle();
+        Ticket ticketOfDayTwo = ticketDAO.getTicket("ABCDEF"); // Assuming "ABCDEF" is the vehicle registration number
+        ticketOfDayTwo.setInTime(new Date(System.currentTimeMillis() - 120 * 60 * 1000)); // 2 hour ago
+        ticketDAO.updateTicket(ticket);
+        parkingService.processExitingVehicle();
+        Ticket updatedTicketOfDayTwo = ticketDAO.getTicket("ABCDEF");
+        double expectedPriceOfDayTwo = 2 * Fare.CAR_RATE_PER_HOUR *0.95 ;
+        assertEquals(expectedPriceOfDayTwo,updatedTicketOfDayTwo.getPrice(),0.01);
         //assertEquals(expectedPrice, updatedTicket.getPrice(), 0.01);
 
     }

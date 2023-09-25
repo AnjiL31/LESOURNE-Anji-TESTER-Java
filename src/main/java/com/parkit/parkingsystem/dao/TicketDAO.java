@@ -82,7 +82,14 @@ public class TicketDAO {
             else {
                 ps.setTimestamp(2,null);
             }
-            ps.setInt(3, ticket.getId());
+
+            if (ticket.getInTime() != null){
+                ps.setTimestamp(3, new Timestamp(ticket.getInTime().getTime()));
+            } else {
+                ps.setTimestamp(3, null);
+            }
+
+            ps.setInt(4, ticket.getId());
             ps.execute();
             return true;
         } catch (Exception ex) {

@@ -21,12 +21,16 @@ public class ParkingSpotDAO {
         int result=-1;
         try {
             con = dataBaseConfig.getConnection();
+            System.out.println("con = " + con);
+
             PreparedStatement ps = con.prepareStatement(DBConstants.GET_NEXT_PARKING_SPOT);
             ps.setString(1, parkingType.toString());
             ResultSet rs = ps.executeQuery();
+            System.out.println("rs.getFetchSize() = " + rs.getFetchSize());
             if(rs.next()){
                 result = rs.getInt(1);;
             }
+
             dataBaseConfig.closeResultSet(rs);
             dataBaseConfig.closePreparedStatement(ps);
         }catch (Exception ex){
