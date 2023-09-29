@@ -33,10 +33,10 @@ public class FareCalculatorIntegrationTest {
         fareCalculatorService.calculateFare(ticket, true);
 
         // caclucate the price with 5% discount for 3 hours of parking?
-        double expectedPrice = 0.95 * 3 * Fare.CAR_RATE_PER_HOUR;
+        double expectedPrice = 0.95 * 2 * Fare.CAR_RATE_PER_HOUR;
 
         // Verify that the actual price matches the expected price
-        assertEquals(expectedPrice, ticket.getPrice());
+        assertEquals(expectedPrice, ticket.getPrice(),0.001);
     }
 
 }

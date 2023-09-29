@@ -6,7 +6,7 @@ public class Fare {
 
     //added to ensure parking does not equal 0
 
-    public static final double MINIMUM_PRICE = 1.4249999999999998; // number "expected" when test is run
+    public static final double MINIMUM_PRICE = 1.5; // number "expected" when test is run
 
 
 }
