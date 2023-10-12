@@ -72,14 +72,19 @@ public class ParkingDataBaseIT {
 
     @Test
     public void testParkingLotExit() {
-        testParkingACar();
+
         ParkingService parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);
-        parkingService.processExitingVehicle();
+        parkingService.processIncomingVehicle();
         Ticket ticket = ticketDAO.getTicket("ABCDEF"); // Assuming "ABCDEF" is the vehicle registration number
+        // The recurring user has parked for 1 hour
+        ticket.setInTime(new Date(System.currentTimeMillis() - 120 * 60 * 1000)); // 2 hour ago
+        ticketDAO.updateTicket(ticket);
+        parkingService.processExitingVehicle();
+        ticket = ticketDAO.getTicket("ABCDEF"); // Assuming "ABCDEF" is the vehicle registration number
 
         //why ticket equals 0? Assert equals corrected to initial price
 
-        assertEquals(0, ticket.getPrice()); // Assuming the initial price is 0, you can adjust it based on your logic
+        assertEquals(3, ticket.getPrice(),0.01); // Assuming the initial price is 0, you can adjust it based on your logic
         assertNotNull(ticket.getOutTime());
 
     }
@@ -93,7 +98,7 @@ public class ParkingDataBaseIT {
         parkingService.processIncomingVehicle();
         Ticket ticket = ticketDAO.getTicket("ABCDEF"); // Assuming "ABCDEF" is the vehicle registration number
         // The recurring user has parked for 1 hour
-        ticket.setInTime(new Date(System.currentTimeMillis() - 120 * 60 * 1000)); // 1 hour ago
+        ticket.setInTime(new Date(System.currentTimeMillis() - 120 * 60 * 1000)); // 2 hour ago
         ticketDAO.updateTicket(ticket);
         parkingService.processExitingVehicle();
         Ticket updatedTicket = ticketDAO.getTicket("ABCDEF");

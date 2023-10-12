@@ -20,7 +20,7 @@ public class TicketDAO {
 
     public DataBaseConfig dataBaseConfig = new DataBaseConfig();
 
-    public boolean saveTicket(Ticket ticket) {
+    public boolean insertTicket(Ticket ticket) {
         Connection con = null;
         try {
             con = dataBaseConfig.getConnection();
@@ -34,6 +34,8 @@ public class TicketDAO {
             ps.setTimestamp(5, (ticket.getOutTime() == null) ? null : (new Timestamp(ticket.getOutTime().getTime())));
             return ps.execute();
         } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+            System.out.println("toto");
             logger.error("Error fetching next available slot", ex);
         } finally {
             dataBaseConfig.closeConnection(con);
@@ -76,14 +78,13 @@ public class TicketDAO {
             con = dataBaseConfig.getConnection();
             PreparedStatement ps = con.prepareStatement(DBConstants.UPDATE_TICKET);
             ps.setDouble(1, ticket.getPrice());
-            if(ticket.getOutTime()!=null){
+            if (ticket.getOutTime() != null) {
                 ps.setTimestamp(2, new Timestamp(ticket.getOutTime().getTime()));
-            }
-            else {
-                ps.setTimestamp(2,null);
+            } else {
+                ps.setTimestamp(2, null);
             }
 
-            if (ticket.getInTime() != null){
+            if (ticket.getInTime() != null) {
                 ps.setTimestamp(3, new Timestamp(ticket.getInTime().getTime()));
             } else {
                 ps.setTimestamp(3, null);
@@ -105,6 +106,7 @@ public class TicketDAO {
         Connection con = null;
         int count = 0;
 
+
         try {
             con = dataBaseConfig.getConnection();
             PreparedStatement ps = con.prepareStatement(DBConstants.COUNT_TICKET);
@@ -123,5 +125,36 @@ public class TicketDAO {
             dataBaseConfig.closeConnection(con);
         }
         return count;
+
+
+    }
+
+    public boolean insertTodayTicket(Ticket ticket) {
+        Connection con = null;
+        try {
+            con = dataBaseConfig.getConnection();
+            PreparedStatement ps = con.prepareStatement(DBConstants.SAVE_TICKET);
+
+            // Set the values for the prepared statement
+            ps.setInt(1, ticket.getParkingSpot().getId());
+            ps.setString(2, ticket.getVehicleRegNumber());
+            ps.setDouble(3, ticket.getPrice());
+            ps.setTimestamp(4, new Timestamp(ticket.getInTime().getTime()));
+            ps.setTimestamp(5, (ticket.getOutTime() == null) ? null : new Timestamp(ticket.getOutTime().getTime()));
+
+            // Execute the insert query
+            int rowsInserted = ps.executeUpdate();
+
+            // Check if the insert was successful (1 row should be inserted)
+            return rowsInserted == 1;
+        } catch (Exception ex) {
+            logger.error("Error inserting ticket", ex);
+        } finally {
+            dataBaseConfig.closeConnection(con);
+        }
+        return false; // Return false if the insertion fails
     }
 }
+
+
+

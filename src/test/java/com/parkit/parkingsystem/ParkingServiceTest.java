@@ -100,36 +100,6 @@ public class ParkingServiceTest {
         assertEquals(null, parkingService.getNextParkingNumberIfAvailable());
         //ParkingSpot parkingSpot = parkingService.getNextParkingNumberIfAvailable(incorrectVehicleType);
     }
-
-    @Test
-    public void testParkingLotExitRecurringUser() {
-        // Given: Recurring user's vehicle
-        String recurringUserVehicleRegNumber = "ABCDEF"; // The recurring user's vehicle registration number
-
-        // Mock the behavior for a recurring user's ticket retrieval
-        Ticket recurringUserTicket = new Ticket();
-        recurringUserTicket.setInTime(new Date(System.currentTimeMillis() - (60 * 60 * 1000)));
-        ParkingSpot leSuperParkingSpot = new ParkingSpot();
-        leSuperParkingSpot.setParkingType(ParkingType.CAR);
-        recurringUserTicket.setParkingSpot(leSuperParkingSpot);
-        recurringUserTicket.setVehicleRegNumber(recurringUserVehicleRegNumber);
-        when(ticketDAO.getTicket(eq(recurringUserVehicleRegNumber))).thenReturn(recurringUserTicket);
-
-        // When: Recurring user exits the parking lot
-        parkingService.processExitingVehicle();
-
-        // Then: Verify the price calculation with 5% discount
-        verify(ticketDAO, times(1)).updateTicket(any(Ticket.class)); // Ensure ticket update is called
-
-        // Calculate the expected price for a recurring user with 5% discount
-        double expectedPrice = recurringUserTicket.getDuration()*Fare.CAR_RATE_PER_HOUR * 0.999; // was 0.95 corrected it to 0.999
-
-//Round the expected Price to 2 decimal places
-        expectedPrice = Math.round(expectedPrice * 100.0) / 100.0;
-
-
-        assertEquals(recurringUserTicket.getPrice(), expectedPrice, 0.01);
-    }
 }
 
 

@@ -29,6 +29,8 @@ public class ParkingSpotDAO {
             System.out.println("rs.getFetchSize() = " + rs.getFetchSize());
             if(rs.next()){
                 result = rs.getInt(1);;
+
+
             }
 
             dataBaseConfig.closeResultSet(rs);
@@ -90,5 +92,30 @@ public class ParkingSpotDAO {
         }
 
     }
+    public boolean insertParkingSpot(ParkingSpot parkingSpot) {
+        Connection con = null;
+        try {
+            con = dataBaseConfig.getConnection();
+            PreparedStatement ps = con.prepareStatement(DBConstants.GET_PARKING_SPOT);
 
+            // Set the values for the prepared statement
+            ps.setInt(1, parkingSpot.getId());
+            ps.setString(2, parkingSpot.getParkingType().toString());
+            ps.setBoolean(3, parkingSpot.isAvailable());
+
+            // Execute the insert query
+            int rowsInserted = ps.executeUpdate();
+
+            // Check if the insert was successful (1 row should be inserted)
+            return rowsInserted == 1;
+        } catch (Exception ex) {
+            logger.error("Error inserting parking spot", ex);
+        } finally {
+            dataBaseConfig.closeConnection(con);
+        }
+        return false; // Return false if the insertion fails
+
+
+
+    }
 }
